@@ -20,3 +20,22 @@ cv2.imshow("original image", image)
 cv2.imshow("after edge detection", edges)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
+
+contours = cv2.findContours(edges.copy(), cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+contours = imutils.grab_contours(contours)
+contours = sorted(contours, key=cv2.contourArea, reverse=True)[:5]
+
+document_contour = None
+for contour in contours:
+    perimeter = cv2.arcLength(contour, True)
+    approx = cv2.approxPolyDP(contour, 0.02 * perimeter, True)
+
+    if len(approx) == 4:
+        document_contour = approx
+        break
+
+print("step 2: contour detection")
+cv2.drawContours(image, [document_contour], -1, (0, 255, 0), 2)
+cv2.imshow("after contour detection", image)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
