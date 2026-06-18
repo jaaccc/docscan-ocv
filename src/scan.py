@@ -35,7 +35,10 @@ for contour in contours:
         break
 
 print("step 2: contour detection")
-cv2.drawContours(image, [document_contour], -1, (0, 255, 0), 2)
-cv2.imshow("after contour detection", image)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+if document_contour is None:
+    print("no document contour found")
+else:
+    cv2.drawContours(image, [document_contour], -1, (0, 255, 0), 2)
+    cv2.imshow("after contour detection", image)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
