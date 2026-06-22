@@ -1,3 +1,5 @@
+from skimage.filters import threshold_local
+from transform import four_point_transform
 import argparse
 import cv2
 import imutils
@@ -40,5 +42,18 @@ if document_contour is None:
 else:
     cv2.drawContours(image, [document_contour], -1, (0, 255, 0), 2)
     cv2.imshow("after contour detection", image)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+    top_down = four_point_transform(original, document_contour.reshape(4, 2) * ratio)
+
+    top_down = cv2.cvtColor(top_down, cv2.COLOR_BGR2GRAY)
+
+    threshold_map = threshold_local(top_down, 11, offset=10, method="gaussian")
+    top_down = (top_down > threshold_map).astype("uint8") * 255
+
+    print("step 3: perspective transform")
+    cv2.imshow("original", imutils.resize(original, height=650))
+    cv2.imshow("scanned", imutils.resize(top_down, height=650))
     cv2.waitKey(0)
     cv2.destroyAllWindows()
